@@ -19,7 +19,7 @@ const addMovie = (req, res, next) => {
 // Функция удаления фильма
 const deleteMovie = (req, res, next) => {
   movieModel.findById(req.params.movieId)
-    .orFail(() => next(new NotFound('Фильм по указанным данным не найден на сервере')))
+    .orFail(new NotFoundError({ message: 'Фильм по указанным данным не найден на сервере' }))
     .then((movieItem) => {
       if (movieItem.owner.equals(req.user._id)) {
         return movieModel.findByIdAndRemove(req.params.movieId).then(() => res.send({ message: 'Выбранный фильм успешно удалён' })).catch(next);
