@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Then you can pull it in as needed in find and populate calls via field selection as '+password'
 // eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')

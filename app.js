@@ -3,8 +3,9 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const { DATABASE } = require('./utils/bd_data');
 
-const { PORT, MONGO_URL, API_ADDRESS } = process.env;
+const { PORT = 3000, NODE_ENV, DATABASE } = process.env;
 const cors = require('cors');
 const helmet = require('helmet');
 const corsOptions = require('./utils/cors-options');
@@ -20,7 +21,11 @@ const mainRouter = require('./routes/index');
 
 // Блок кода для работы с mongoDB
 mongoose.set('strictQuery', false);
-mongoose.connect(MONGO_URL);
+mongoose.connect(NODE_ENV === 'production' ? DATABASE : {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+});
 
 app.use('*', cors(corsOptions));
 // Логгер
@@ -40,5 +45,5 @@ app.use(responseHandler);
 // Служебная информация: адрес запущенного сервера
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Сервер успешно запущен — ${API_ADDRESS}`);
+  console.log(`Сервер успешно запущен — ${PORT}`);
 });
