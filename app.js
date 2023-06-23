@@ -3,7 +3,6 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const { DATABASE } = require('./utils/bd_data');
 
 const { PORT = 3000, NODE_ENV, DATABASE } = process.env;
 const cors = require('cors');
@@ -21,10 +20,8 @@ const mainRouter = require('./routes/index');
 
 // Блок кода для работы с mongoDB
 mongoose.set('strictQuery', false);
-mongoose.connect(NODE_ENV === 'production' ? DATABASE : {
+mongoose.connect(NODE_ENV === 'production' ? DATABASE : 'mongodb://localhost:27017/bitfilmsdb', {
   useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
 });
 
 app.use('*', cors(corsOptions));
