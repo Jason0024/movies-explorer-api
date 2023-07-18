@@ -18,9 +18,11 @@ const addMovie = (req, res, next) => {
 };
 // Функция удаления фильма
 const deleteMovie = (req, res, next) => {
-  movieModel.findById(req.params.movieId)
-    .orFail(new NotFoundError({ message: 'Фильм по указанным данным не найден на сервере' }))
+  movieModel.findById(new mongoose.Types.ObjectId(req.params.movieId))
     .then((movieItem) => {
+      if (movieItem === null) {
+        next(new NotFound('Фильм по указанным данным не найден на сервере'));
+      }
       if (movieItem.owner.equals(req.user._id)) {
         return movieModel.findByIdAndRemove(req.params.movieId).then(() => res.send({ message: 'Выбранный фильм успешно удалён' })).catch(next);
       } return next(new Forbidden('Вы не являетесь автором фильма, удаление невозможно'));
