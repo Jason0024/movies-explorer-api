@@ -60,8 +60,9 @@ const updateUserData = (req, res, next) => {
     .then((userItem) => {
       if (userItem === null) {
         next(new NotFound('Пользователь по указанному ID не найден'))
-     } else {
-       res.send(userItem)
+      } else {
+        res.send(userItem)
+      }
      })
     .catch((error) => {
       if (error instanceof ValidationError) next(new BadRequests('Переданы некорректные данные при обновлении пользователя'));
