@@ -41,8 +41,13 @@ const registerUser = (req, res, next) => {
 // Функция получения пользователя по ID
 const getUserId = (req, res, next) => {
   userModel.findById(req.user._id)
-    .orFail(() => next(new NotFound('Пользователь по указанному ID не найден')))
-    .then((userItem) => res.send(userItem))
+    .then((userItem) => {
+      if (userItem === null) {
+         next(new NotFound('Пользователь по указанному ID не найден'))
+      } else {
+        res.send(userItem)
+      }
+    })
     .catch((error) => {
       if (error instanceof CastError) next(new BadRequests('Некорректные данные запрашиваемого пользователя'));
       else next(error);
@@ -52,8 +57,12 @@ const getUserId = (req, res, next) => {
 const updateUserData = (req, res, next) => {
   const { name, email } = req.body;
   userModel.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
-    .orFail(new NotFoundError({ message: 'Пользователь по указанному ID не найден' }))
-    .then((userItem) => res.send(userItem))
+    .then((userItem) => {
+      if (userItem === null) {
+        next(new NotFound('Пользователь по указанному ID не найден'))
+     } else {
+       res.send(userItem)
+     })
     .catch((error) => {
       if (error instanceof ValidationError) next(new BadRequests('Переданы некорректные данные при обновлении пользователя'));
       else next(error);
